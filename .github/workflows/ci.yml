@@ -4,7 +4,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main, ci-cd-addon, sketch-wip ]
+    branches: [ main, ci-cd-addon, sketch-wip, passenger-metrics ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
