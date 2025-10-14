@@ -112,13 +112,68 @@ ab -k -c 50 -n 2000 'http://localhost:8080/status/200?seconds_sleep=2'
 └── promtail-config.yaml  # Конфигурация Promtail
 ```
 
+## CI/CD и разработка
+
+### Доступные команды (Makefile)
+
+```bash
+make help          # Показать все доступные команды
+make dev           # Настроить среду разработки
+make test          # Запустить все тесты
+make test-unit     # Запустить unit тесты
+make ci-test       # Запустить тесты для CI
+make up            # Запустить все сервисы
+make down          # Остановить все сервисы
+make health        # Проверить здоровье сервисов
+make clean         # Очистить временные файлы
+```
+
+### GitHub Actions CI/CD
+
+Проект включает полноценный CI/CD pipeline:
+- **Unit Testing**: тестирование Python кода
+- **Integration Testing**: тестирование API и Docker containers
+- **Security Scanning**: проверка безопасности с Trivy
+- **Load Testing**: нагрузочное тестирование с Apache Bench
+
+Pipeline запускается автоматически при push в ветки `main`, `ci-cd-addon`, `sketch-wip`.
+
+### Pre-commit hooks
+
+Для обеспечения качества кода:
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Hooks включают:
+- Code formatting (Black, isort)
+- Linting (flake8)
+- YAML/JSON validation
+- Unit tests
+
+### Структура тестов
+
+```
+backend/tests/
+├── __init__.py
+└── test_main.py    # Comprehensive API tests
+```
+
+Тесты покрывают:
+- Все API endpoints
+- Error handling
+- Metrics collection
+- Concurrent requests
+- OpenAPI documentation
+
 ## Расширение проекта
 
 Данный проект является отличной основой для:
 - Изучения observability практик
 - Настройки мониторинга микросервисов
 - Создания alerting rules
-- Интеграции с CI/CD pipeline
+- Изучения современных CI/CD практик
 - Добавления трейсинга (Jaeger/Tempo)
 
 ## Пример дашборда
