@@ -1,0 +1,11 @@
+# Minimal Docker Compose for CI/CD environments
+# Only includes essential services for testing
+services:
+  backend:
+    build: ./backend
+    container_name: backend-ci
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: "no"
