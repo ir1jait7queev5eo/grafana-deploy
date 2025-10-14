@@ -161,7 +161,8 @@ class TestAPI:
         for line in metric_lines:
             if line.strip():
                 # Each metric line should have format: metric_name{labels} value
-                parts = line.split(' ')
+                # Use rsplit to split only on the last space (labels can contain spaces)
+                parts = line.rsplit(' ', 1)
                 assert len(parts) == 2, f"Invalid metric line format: {line}"
                 metric_name_with_labels = parts[0]
                 value = parts[1]
