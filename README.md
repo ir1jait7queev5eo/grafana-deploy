@@ -35,7 +35,8 @@
 - `GET /status/{status_code}` - возвращает указанный HTTP статус
 - `GET /status/{status_code}?seconds_sleep=N` - добавляет задержку N секунд
 - `GET /docs` - OpenAPI документация (Scalar UI)
-- `GET /metrics` - Prometheus метрики
+- `GET /metrics` - Prometheus метрики (Litestar application)
+- `GET /passenger_metrics` - Phusion Passenger метрики (mock для демонстрации)
 
 ### Технологический стек
 
@@ -59,9 +60,10 @@
    - Grafana: http://localhost:3000 (admin/admin)
    - Promtail: http://localhost:9080
 
-3. Импорт дашборда:
-   - Откройте Grafana
-   - Import dashboard из файла `grafana/example-dashboard.json`
+3. Доступные дашборды в Grafana:
+   - **Example Dashboard** - основной мониторинг системы
+   - **Passenger Monitoring** - мониторинг Phusion Passenger (автоматически загружается)
+   - Дополнительно: можно импортировать `grafana/example-dashboard.json` вручную
 
 ## Видео
 https://youtu.be/LyocQr7cN-0
@@ -86,10 +88,20 @@ ab -k -c 50 -n 2000 'http://localhost:8080/status/200?seconds_sleep=2'
 ## Мониторинг и алерты
 
 ### Ключевые метрики для отслеживания:
+
+**Litestar Application:**
 - HTTP request rate и latency
 - Error rate по статусам
 - Resource utilization (CPU, Memory)
 - Log error patterns
+
+**Phusion Passenger (mock):**
+- Количество процессов по приложениям
+- Использование мощности (capacity)
+- CPU и Memory usage по процессам
+- Request rate и общее количество обработанных запросов
+- Размер очереди ожидания
+- Активные сессии
 
 ### Retention policies:
 - **Prometheus**: по умолчанию 15 дней
@@ -161,11 +173,12 @@ backend/tests/
 ```
 
 Тесты покрывают:
-- Все API endpoints
+- Все API endpoints (включая `/passenger_metrics`)
 - Error handling
-- Metrics collection
+- Metrics collection (Litestar и Passenger)
 - Concurrent requests
 - OpenAPI documentation
+- Validation Prometheus format метрик
 
 ## Расширение проекта
 

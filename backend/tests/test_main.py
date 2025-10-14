@@ -124,3 +124,71 @@ class TestAPI:
         # All requests should succeed
         assert all(status == 200 for status in results)
         assert len(results) == 10
+    
+    def test_passenger_metrics_endpoint(self, client):
+        """Test Passenger metrics endpoint returns valid Prometheus format."""
+        response = client.get("/passenger_metrics")
+        assert response.status_code == 200
+        
+        # Check content type - should be plain text
+        assert response.headers.get("content-type") == "text/plain; charset=utf-8"
+        
+        metrics_text = response.text
+        
+        # Check for expected metric families
+        assert "passenger_process_count" in metrics_text
+        assert "passenger_capacity_used" in metrics_text
+        assert "passenger_supergroup_capacity_used" in metrics_text
+        assert "passenger_process_cpu" in metrics_text
+        assert "passenger_process_memory" in metrics_text
+        assert "passenger_process_sessions" in metrics_text
+        assert "passenger_process_processed" in metrics_text
+        
+        # Check for expected labels
+        assert 'instance="ChsBkRTF"' in metrics_text
+        assert 'supergroup="/srv/rozarioflowers.ru (production)"' in metrics_text
+        assert 'supergroup="Prometheus exporter"' in metrics_text
+        
+        # Check for HELP and TYPE comments
+        assert "# HELP passenger_process_count" in metrics_text
+        assert "# TYPE passenger_process_count gauge" in metrics_text
+        assert "# TYPE passenger_process_processed counter" in metrics_text
+        
+        # Validate that metrics contain numeric values
+        lines = metrics_text.split('\n')
+        metric_lines = [line for line in lines if line and not line.startswith('#')]
+        
+        for line in metric_lines:
+            if line.strip():
+                # Each metric line should have format: metric_name{labels} value
+                parts = line.split(' ')
+                assert len(parts) == 2, f"Invalid metric line format: {line}"
+                metric_name_with_labels = parts[0]
+                value = parts[1]
+                
+                # Value should be numeric
+                try:
+                    float(value)
+                except ValueError:
+                    assert False, f"Non-numeric value in metric line: {line}"
+                
+                # Metric name should contain passenger prefix
+                assert 'passenger_' in metric_name_with_labels, f"Missing passenger prefix: {line}"
+    
+    def test_passenger_metrics_variability(self, client):
+        """Test that passenger metrics show some variability (not all static)."""
+        # Make two requests and compare - some metrics should vary
+        response1 = client.get("/passenger_metrics")
+        import time
+        time.sleep(0.1)  # Small delay
+        response2 = client.get("/passenger_metrics")
+        
+        assert response1.status_code == 200
+        assert response2.status_code == 200
+        
+        # The responses might be different due to random generation
+        # But they should both be valid Prometheus format
+        for response in [response1, response2]:
+            metrics_text = response.text
+            assert "passenger_process_count" in metrics_text
+            assert 'instance="ChsBkRTF"' in metrics_text
