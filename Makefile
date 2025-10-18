@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 .PHONY: help test test-unit test-integration test-load build up down logs clean install dev
 
 # Default target
@@ -10,7 +11,7 @@ help: ## Show this help message
 # Development setup
 install: ## Install backend dependencies
 	@echo "Installing backend dependencies..."
-	cd backend && python -m venv venv && source venv/bin/activate && pip install -r req.txt
+	cd backend && python -m venv env && source env/bin/activate && python -m pip install --upgrade pip && python -m pip install -r req.txt
 	@echo "Installing test dependencies..."
 	cd backend && source venv/bin/activate && pip install pytest pytest-asyncio httpx pytest-cov
 
