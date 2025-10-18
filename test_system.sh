@@ -173,10 +173,10 @@ test_prometheus_metrics() {
         "curl -s $BACKEND_URL/metrics" \
         "litestar_requests_total"
     
-    # Test Prometheus targets
+    # Test Prometheus targets (check for backend:8080 in Docker or localhost:8080 in local)
     run_test "Prometheus targets" \
         "curl -s $PROMETHEUS_URL/api/v1/targets" \
-        "localhost:8080"
+        "backend:8080\|localhost:8080"
     
     # Test Prometheus query
     run_test "Prometheus query API" \

@@ -24,14 +24,14 @@ dev: ## Set up development environment
 # Docker operations
 build: ## Build all Docker images
 	@echo "Building Docker images..."
-	docker-compose build
+	docker compose build
 
 up: ## Start all services with Docker Compose
 	@echo "Starting services..."
-	docker-compose up -d
+	docker compose up -d
 	@echo "Services started. Waiting for health checks..."
 	@sleep 30
-	@docker-compose ps
+	@docker compose ps
 
 setup-grafana: ## Configure Grafana with correct datasources and dashboards
 	@echo "Setting up Grafana for Docker environment..."
@@ -41,13 +41,13 @@ up-and-setup: up setup-grafana ## Start services and configure Grafana (recommen
 
 down: ## Stop all services
 	@echo "Stopping services..."
-	docker-compose down -v
+	docker compose down -v
 
 logs: ## Show logs from all services
-	docker-compose logs -f
+	docker compose logs -f
 
 status: ## Show status of all services
-	docker-compose ps
+	docker compose ps
 
 # Testing
 test: ## Run all tests
@@ -108,7 +108,7 @@ stop-monitoring: ## Stop monitoring stack
 # Utility operations
 clean: ## Clean up containers, volumes, and temporary files
 	@echo "Cleaning up..."
-	docker-compose down -v --remove-orphans
+	docker compose down -v --remove-orphans
 	docker system prune -f
 	rm -f backend/*.pid
 	rm -f *.log
@@ -119,7 +119,7 @@ clean: ## Clean up containers, volumes, and temporary files
 check-deps: ## Check if required tools are installed
 	@echo "Checking dependencies..."
 	@command -v docker >/dev/null 2>&1 || { echo "Docker not found. Please install Docker."; exit 1; }
-	@command -v docker-compose >/dev/null 2>&1 || { echo "Docker Compose not found. Please install Docker Compose."; exit 1; }
+	@(command -v docker-compose >/dev/null 2>&1 || command -v docker >/dev/null 2>&1) || { echo "Docker Compose not found. Please install Docker Compose."; exit 1; }
 	@command -v python3 >/dev/null 2>&1 || { echo "Python 3 not found. Please install Python 3."; exit 1; }
 	@echo "All dependencies are installed."
 

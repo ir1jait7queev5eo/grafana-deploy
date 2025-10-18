@@ -64,8 +64,8 @@ fi
 # Check Docker health if available
 if command -v docker &> /dev/null && docker info &>/dev/null 2>&1; then
     echo "🐳 Checking Docker services..."
-    if docker-compose ps &>/dev/null; then
-        docker-compose ps
+    if docker compose ps &>/dev/null; then
+        docker compose ps
     else
         echo "Docker Compose services not running"
     fi
