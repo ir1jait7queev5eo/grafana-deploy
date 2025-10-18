@@ -138,14 +138,35 @@ test_prometheus_metrics() {
     
     # Generate some traffic to create metrics
     log "Generating traffic to create metrics data..."
-    for i in {1..5}; do
+    for i in {1..10}; do
         curl -s "$BACKEND_URL/status/200" &>/dev/null
         curl -s "$BACKEND_URL/status/500" &>/dev/null
+        curl -s "$BACKEND_URL/" &>/dev/null
     done
     
-    # Wait for Prometheus to scrape metrics (scrape_interval = 3s)
+    # Wait for Prometheus to scrape metrics multiple times (scrape_interval = 3s)
     log "Waiting for Prometheus to collect metrics..."
-    sleep 5
+    sleep 8
+    
+    # Verify metrics are available before testing
+    local retry_count=0
+    local max_retries=5
+    while [ $retry_count -lt $max_retries ]; do
+        local metrics_result=$(curl -s "$PROMETHEUS_URL/api/v1/query?query=litestar_requests_total")
+        if echo "$metrics_result" | grep -q '"result":\[{'; then
+            log "Metrics successfully detected in Prometheus"
+            break
+        else
+            log "Metrics not yet available, retrying in 3 seconds... ($((retry_count+1))/$max_retries)"
+            sleep 3
+            retry_count=$((retry_count + 1))
+        fi
+    done
+    
+    if [ $retry_count -eq $max_retries ]; then
+        error "Failed to detect metrics after $max_retries attempts"
+        return 1
+    fi
     
     # Test metrics endpoint
     run_test "Backend metrics endpoint" \
@@ -162,10 +183,10 @@ test_prometheus_metrics() {
         "curl -s '$PROMETHEUS_URL/api/v1/query?query=up'" \
         "success"
     
-    # Test specific metrics
+    # Test specific metrics with more robust checking
     run_test "Litestar metrics in Prometheus" \
-        "curl -s '$PROMETHEUS_URL/api/v1/query?query=litestar_requests_total'" \
-        "litestar_requests_total"
+        "curl -s '$PROMETHEUS_URL/api/v1/query?query=litestar_requests_total' | jq -r '.data.result | length'" \
+        "^[1-9][0-9]*$"  # Should return a number > 0
 }
 
 test_grafana_access() {

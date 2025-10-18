@@ -1,0 +1,212 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "docker-observability",
+    "title": "Docker Observability Stack",
+    "tags": ["docker", "observability", "litestar", "passenger"],
+    "timezone": "browser",
+    "time": {
+      "from": "now-15m",
+      "to": "now"
+    },
+    "refresh": "5s",
+    "templating": {
+      "list": []
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Service Health (Up Status)",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PBFA97CFB590B2093"
+            },
+            "expr": "up",
+            "refId": "A",
+            "legendFormat": "{{job}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "green", "value": 1}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Total HTTP Requests",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 6,
+          "y": 0
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PBFA97CFB590B2093"
+            },
+            "expr": "sum(litestar_requests_total)",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "blue"
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "HTTP Request Rate (req/sec)",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 0
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PBFA97CFB590B2093"
+            },
+            "expr": "sum(rate(litestar_requests_total[1m]))",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "orange"
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Passenger Processes",
+        "type": "stat",
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 0
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PBFA97CFB590B2093"
+            },
+            "expr": "passenger_process_count",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "color": {
+              "mode": "fixed",
+              "fixedColor": "purple"
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "HTTP Requests by Status Code",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PBFA97CFB590B2093"
+            },
+            "expr": "rate(litestar_requests_total[1m])",
+            "refId": "A",
+            "legendFormat": "{{method}} {{path}} ({{status_code}})"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 6,
+        "title": "Passenger Metrics Over Time",
+        "type": "timeseries",
+        "gridPos": {
+          "h": 9,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PBFA97CFB590B2093"
+            },
+            "expr": "passenger_process_count",
+            "refId": "A",
+            "legendFormat": "Process Count"
+          },
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "PBFA97CFB590B2093"
+            },
+            "expr": "passenger_capacity_used",
+            "refId": "B",
+            "legendFormat": "Capacity Used"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        }
+      }
+    ],
+    "schemaVersion": 30,
+    "version": 1
+  },
+  "overwrite": true
+}

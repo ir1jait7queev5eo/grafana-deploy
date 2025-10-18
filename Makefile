@@ -33,6 +33,12 @@ up: ## Start all services with Docker Compose
 	@sleep 30
 	@docker-compose ps
 
+setup-grafana: ## Configure Grafana with correct datasources and dashboards
+	@echo "Setting up Grafana for Docker environment..."
+	@./setup_grafana.sh
+
+up-and-setup: up setup-grafana ## Start services and configure Grafana (recommended)
+
 down: ## Stop all services
 	@echo "Stopping services..."
 	docker-compose down -v
