@@ -31,12 +31,12 @@ log() {
 
 success() {
     echo -e "${GREEN}✅ $1${NC}"
-    ((PASSED_TESTS++))
+    PASSED_TESTS=$((PASSED_TESTS + 1))
 }
 
 error() {
     echo -e "${RED}❌ $1${NC}"
-    ((FAILED_TESTS++))
+    FAILED_TESTS=$((FAILED_TESTS + 1))
 }
 
 warn() {
@@ -48,7 +48,7 @@ run_test() {
     local test_command="$2"
     local expected_pattern="$3"
     
-    ((TOTAL_TESTS++))
+    TOTAL_TESTS=$((TOTAL_TESTS + 1))
     log "Running test: $test_name"
     
     local result
@@ -125,12 +125,12 @@ test_backend_endpoints() {
     
     if [ $duration -ge 2 ]; then
         success "Sleep endpoint works correctly (took ${duration}s)"
-        ((PASSED_TESTS++))
+        PASSED_TESTS=$((PASSED_TESTS + 1))
     else
         error "Sleep endpoint didn't work correctly (took ${duration}s, expected ≥2s)"
-        ((FAILED_TESTS++))
+        FAILED_TESTS=$((FAILED_TESTS + 1))
     fi
-    ((TOTAL_TESTS++))
+    TOTAL_TESTS=$((TOTAL_TESTS + 1))
 }
 
 test_prometheus_metrics() {
@@ -195,8 +195,8 @@ run_load_test() {
     wait $pid1 $pid2 $pid3
     
     success "Load tests completed"
-    ((PASSED_TESTS++))
-    ((TOTAL_TESTS++))
+    PASSED_TESTS=$((PASSED_TESTS + 1))
+    TOTAL_TESTS=$((TOTAL_TESTS + 1))
     
     # Verify metrics increased
     sleep 5  # Wait for Prometheus to scrape

@@ -13,7 +13,7 @@ install: ## Install backend dependencies
 	@echo "Installing backend dependencies..."
 	cd backend && python -m venv env && source env/bin/activate && python -m pip install --upgrade pip && python -m pip install -r req.txt
 	@echo "Installing test dependencies..."
-	cd backend && source venv/bin/activate && pip install pytest pytest-asyncio httpx pytest-cov
+	cd backend && source env/bin/activate && python -m pip install pytest pytest-asyncio httpx pytest-cov
 
 dev: ## Set up development environment
 	@echo "Setting up development environment..."
@@ -51,7 +51,7 @@ test: ## Run all tests
 
 test-unit: ## Run unit tests
 	@echo "Running unit tests..."
-	cd backend && source venv/bin/activate && python -m pytest tests/ -v --cov=. --cov-report=html --cov-report=term
+	cd backend && source env/bin/activate && python -m pytest tests/ -v --cov=. --cov-report=html --cov-report=term
 
 test-integration: ## Run integration tests
 	@echo "Running integration tests..."
