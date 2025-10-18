@@ -234,8 +234,8 @@ run_load_test() {
     sleep 5  # Wait for Prometheus to scrape
     
     run_test "Metrics updated after load test" \
-        "curl -s '$PROMETHEUS_URL/api/v1/query?query=litestar_requests_total' | jq -r '.data.result[0].value[1]'" \
-        "[0-9]+"
+        "curl -s '$PROMETHEUS_URL/api/v1/query?query=litestar_requests_total' | jq -r '.data.result[0].value[1]' | grep -E '^[0-9]+$' && echo 'numeric'" \
+        "numeric"
 }
 
 test_openapi_docs() {
