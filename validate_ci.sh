@@ -11,13 +11,13 @@ echo
 # Step 1: Unit tests
 echo "📋 Step 1: Running unit tests..."
 cd backend
-if [ ! -d "venv" ]; then
-    python -m venv venv
-    source venv/bin/activate
+if [ ! -d "env" ]; then
+    python -m env env
+    source env/bin/activate
     pip install -r req.txt
     pip install pytest pytest-asyncio httpx pytest-cov
 else
-    source venv/bin/activate
+    source env/bin/activate
 fi
 
 python -m pytest tests/ -v --cov=. || {
@@ -42,7 +42,7 @@ echo "🔗 Step 3: Running integration tests..."
 
 # Start backend locally for testing
 cd backend
-source venv/bin/activate
+source env/bin/activate
 python main.py &
 BACKEND_PID=$!
 cd ..

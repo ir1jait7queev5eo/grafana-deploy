@@ -43,8 +43,8 @@ repos:
           - -c
           - |
             cd backend
-            if [ -f venv/bin/activate ]; then
-              source venv/bin/activate
+            if [ -f env/bin/activate ]; then
+              source env/bin/activate
               python -m pytest tests/ -x
             else
               echo "Virtual environment not found, skipping tests"

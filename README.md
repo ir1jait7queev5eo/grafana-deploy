@@ -62,7 +62,7 @@ git checkout passenger-metrics
 # 3. Настроить среду разработки
 make dev
 # или вручную:
-# cd backend && python -m venv venv && source venv/bin/activate && pip install -r req.txt
+# cd backend && python -m env env && source env/bin/activate && pip install -r req.txt
 
 # 4. Запустить все сервисы
 make up

@@ -19,7 +19,7 @@ dev: ## Set up development environment
 	@echo "Setting up development environment..."
 	@$(MAKE) install
 	@echo "Development environment ready!"
-	@echo "To activate: cd backend && source venv/bin/activate"
+	@echo "To activate: cd backend && source env/bin/activate"
 
 # Docker operations
 build: ## Build all Docker images
@@ -73,7 +73,7 @@ test-load: ## Run load tests
 # Backend operations
 start-backend: ## Start backend locally
 	@echo "Starting backend locally..."
-	cd backend && source venv/bin/activate && python main.py &
+	cd backend && source env/bin/activate && python main.py &
 	@echo "Backend started on http://localhost:8080"
 
 stop-backend: ## Stop local backend

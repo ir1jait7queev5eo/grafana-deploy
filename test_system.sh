@@ -136,6 +136,17 @@ test_backend_endpoints() {
 test_prometheus_metrics() {
     log "Testing Prometheus metrics collection"
     
+    # Generate some traffic to create metrics
+    log "Generating traffic to create metrics data..."
+    for i in {1..5}; do
+        curl -s "$BACKEND_URL/status/200" &>/dev/null
+        curl -s "$BACKEND_URL/status/500" &>/dev/null
+    done
+    
+    # Wait for Prometheus to scrape metrics (scrape_interval = 3s)
+    log "Waiting for Prometheus to collect metrics..."
+    sleep 5
+    
     # Test metrics endpoint
     run_test "Backend metrics endpoint" \
         "curl -s $BACKEND_URL/metrics" \

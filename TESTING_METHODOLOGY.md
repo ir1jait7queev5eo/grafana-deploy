@@ -54,10 +54,10 @@ curl -s http://localhost:8080/passenger_metrics | head -10
 
 #### 2.2 Если backend недоступен - локальный запуск
 ```bash
-# Установить зависимости в venv
+# Установить зависимости в env
 cd backend
-python3 -m venv venv
-source venv/bin/activate
+python3 -m env env
+source env/bin/activate
 pip install -r req.txt
 
 # Запустить backend

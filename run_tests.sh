@@ -16,7 +16,7 @@ echo
 # Run unit tests
 echo "🧪 Running unit tests..."
 cd backend
-source venv/bin/activate
+source env/bin/activate
 python -m pytest tests/ -v --cov=. --cov-report=term-missing
 echo "✅ Unit tests completed"
 echo
