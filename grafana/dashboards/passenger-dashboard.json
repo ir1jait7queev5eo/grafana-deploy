@@ -28,7 +28,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -103,7 +103,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "passenger_process_count",
           "interval": "",
@@ -113,7 +113,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "passenger_capacity_used",
           "interval": "",
@@ -127,7 +127,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -202,7 +202,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "passenger_supergroup_capacity_used",
           "interval": "",
@@ -216,7 +216,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -291,7 +291,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "sum by (supergroup) (passenger_process_cpu)",
           "interval": "",
@@ -305,7 +305,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -380,7 +380,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "sum by (supergroup) (passenger_process_memory)",
           "interval": "",
@@ -394,7 +394,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -469,7 +469,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "sum by (supergroup) (rate(passenger_process_processed[5m]))",
           "interval": "",
@@ -483,7 +483,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -562,7 +562,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "passenger_supergroup_get_wait_list_size",
           "interval": "",
@@ -572,7 +572,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "passenger_get_wait_list_size",
           "interval": "",
@@ -586,7 +586,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "prometheus"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -661,7 +661,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "passenger_process_sessions",
           "interval": "",

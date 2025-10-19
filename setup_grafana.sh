@@ -50,25 +50,24 @@ else
     echo "$DATASOURCE_TEST"
 fi
 
-# Import dashboard
-echo "📊 Importing dashboard..."
-if [ -f "grafana/docker-dashboard.json" ]; then
-    DASHBOARD_RESPONSE=$(curl -u "$GRAFANA_USER:$GRAFANA_PASS" -X POST \
-        -H "Content-Type: application/json" \
-        -d @grafana/docker-dashboard.json \
-        "$GRAFANA_URL/api/dashboards/db")
-    
-    if echo "$DASHBOARD_RESPONSE" | grep -q '"status":"success"'; then
-        DASHBOARD_URL=$(echo "$DASHBOARD_RESPONSE" | jq -r '.url')
-        echo "✅ Dashboard imported successfully"
-        echo "🌐 Dashboard URL: $GRAFANA_URL$DASHBOARD_URL"
-    else
-        echo "❌ Dashboard import failed:"
-        echo "$DASHBOARD_RESPONSE"
+# Import dashboards
+echo "📊 Importing dashboards..."
+for dashboard_file in grafana/dashboards/*.json; do
+    if [ -f "$dashboard_file" ]; then
+        dashboard_name=$(basename "$dashboard_file")
+        echo "  Importing $dashboard_name..."
+        DASHBOARD_RESPONSE=$(curl -s -u "$GRAFANA_USER:$GRAFANA_PASS" -X POST \
+            -H "Content-Type: application/json" \
+            -d @"$dashboard_file" \
+            "$GRAFANA_URL/api/dashboards/db")
+        
+        if echo "$DASHBOARD_RESPONSE" | grep -q '"status":"success"\|"id":[0-9]'; then
+            echo "    ✅ $dashboard_name imported successfully"
+        else
+            echo "    ⚠️  $dashboard_name may have issues: $(echo "$DASHBOARD_RESPONSE" | head -c 100)..."
+        fi
     fi
-else
-    echo "❌ Dashboard file not found: grafana/docker-dashboard.json"
-fi
+done
 
 echo
 echo "🎉 Grafana setup completed!"
