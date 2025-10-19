@@ -220,10 +220,24 @@ docker-compose up -d grafana prometheus
 ```
 
 ### Доступные дашборды в Grafana:
-- **Example Dashboard** - основной мониторинг системы
-- **Passenger Monitoring** - мониторинг Phusion Passenger (автоматически загружается)
+- **Docker Observability Stack** - основной мониторинг системы (работает сразу)
+- **Phusion Passenger Monitoring** - мониторинг Passenger процессов (работает с mock данными)
+- **Passenger Monitoring (Working)** - упрощенный passenger dashboard (гарантированно работает)
 - **Monitoring Dashboard** - дополнительный системный мониторинг
-- Дополнительно: можно импортировать `grafana/example-dashboard.json` вручную
+
+Все дашборды автоматически импортируются при выполнении `make setup-grafana`.
+
+#### Быстрая проверка dashboard:
+```bash
+# Проверить что passenger метрики доступны
+curl -s http://localhost:8080/passenger_metrics | head -5
+
+# Проверить через Prometheus
+curl -s -u admin:admin "http://localhost:3000/api/datasources/proxy/uid/PBFA97CFB590B2093/api/v1/query?query=passenger_process_count"
+
+# Открыть рабочий passenger dashboard:
+# http://localhost:3000/d/working-passenger/passenger-monitoring-working
+```
 
 ### Безопасность Production:
 
