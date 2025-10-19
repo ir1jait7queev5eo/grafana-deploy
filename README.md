@@ -64,10 +64,8 @@ make dev
 # или вручную:
 # cd backend && python -m env env && source env/bin/activate && pip install -r req.txt
 
-# 4. Запустить все сервисы
+# 4. Запустить все сервисы (автоматически настроит Grafana)
 make up
-# или:
-# docker-compose up -d
 
 # 5. Проверить здоровье сервисов
 make health
@@ -225,7 +223,7 @@ docker-compose up -d grafana prometheus
 - **Passenger Monitoring (Working)** - упрощенный passenger dashboard (гарантированно работает)
 - **Monitoring Dashboard** - дополнительный системный мониторинг
 
-Все дашборды автоматически импортируются при выполнении `make setup-grafana`.
+Все дашборды автоматически импортируются при выполнении `make up`.
 
 #### Быстрая проверка dashboard:
 ```bash
@@ -482,7 +480,7 @@ make dev           # Настроить среду разработки
 make test          # Запустить все тесты
 make test-unit     # Запустить unit тесты
 make ci-test       # Запустить тесты для CI
-make up            # Запустить все сервисы
+make up            # Запустить все сервисы + настроить Grafana
 make down          # Остановить все сервисы
 make health        # Проверить здоровье сервисов
 make clean         # Очистить временные файлы

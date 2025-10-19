@@ -26,18 +26,26 @@ build: ## Build all Docker images
 	@echo "Building Docker images..."
 	docker compose build
 
-up: ## Start all services with Docker Compose
+up: ## Start all services and configure Grafana automatically
 	@echo "Starting services..."
 	docker compose up -d
 	@echo "Services started. Waiting for health checks..."
 	@sleep 30
 	@docker compose ps
+	@echo "\n🔧 Setting up Grafana automatically..."
+	@./setup_grafana.sh
 
-setup-grafana: ## Configure Grafana with correct datasources and dashboards
+setup-grafana: ## Configure Grafana with correct datasources and dashboards (called automatically by 'up')
 	@echo "Setting up Grafana for Docker environment..."
 	@./setup_grafana.sh
 
-up-and-setup: up setup-grafana ## Start services and configure Grafana (recommended)
+up-only: ## Start services without Grafana setup (for manual configuration)
+	@echo "Starting services only..."
+	docker compose up -d
+	@echo "Services started. Waiting for health checks..."
+	@sleep 30
+	@docker compose ps
+	@echo "\n📝 Note: Run 'make setup-grafana' manually to configure Grafana"
 
 down: ## Stop all services
 	@echo "Stopping services..."
