@@ -46,6 +46,27 @@
 - **Visualization**: Grafana
 - **Orchestration**: Docker Compose
 
+## 🚀 Краткий старт
+
+Теперь всё запускается одной командой:
+
+```bash
+# Полное развёртывание с нуля
+make dev && make build && make up
+```
+
+**Результат:**
+- ✅ Все 5 сервисов запущены
+- ✅ Grafana настроена автоматически
+- ✅ Все dashboard импортированы и работают
+- ✅ Метрики собираются
+
+**Доступ через браузер:**
+- **Backend API**: http://localhost:8080
+- **API документация**: http://localhost:8080/docs  
+- **Grafana**: http://localhost:3000 (admin/admin)
+- **Prometheus**: http://localhost:9090
+
 ## Развёртывание
 
 ### Development Environment
@@ -236,6 +257,9 @@ curl -s -u admin:admin "http://localhost:3000/api/datasources/proxy/uid/PBFA97CF
 # Открыть рабочий passenger dashboard:
 # http://localhost:3000/d/working-passenger/passenger-monitoring-working
 ```
+
+> 🎉 **Никаких дополнительных команд setup-grafana больше не нужно!**  
+> Всё настраивается автоматически при `make up`. 🚀
 
 ### Безопасность Production:
 
