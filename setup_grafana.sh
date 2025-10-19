@@ -1,79 +1,94 @@
 #!/bin/bash
 
-# Script to set up Grafana with proper datasources and dashboards for Docker environment
+# Simplified Grafana setup script
 
 set -e
 
+# Configuration
 GRAFANA_URL="http://localhost:3000"
 GRAFANA_USER="admin"
 GRAFANA_PASS="admin"
-PROMETHEUS_URL="http://prometheus:9090"  # Docker internal URL
+PROMETHEUS_URL="http://prometheus:9090"
+DATASOURCE_UID="PBFA97CFB590B2093"
 
-echo "🔧 Setting up Grafana for Docker environment..."
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'
 
-# Wait for Grafana to be ready
-echo "⏳ Waiting for Grafana to be ready..."
+log() { echo -e "${BLUE}🔧${NC} $1"; }
+success() { echo -e "${GREEN}✅${NC} $1"; }
+error() { echo -e "${RED}❌${NC} $1"; }
+
+# Helper function for Grafana API calls
+grafana_api() {
+    local method=$1
+    local endpoint=$2
+    local data=$3
+    
+    curl -s -u "$GRAFANA_USER:$GRAFANA_PASS" \
+         -X "$method" \
+         ${data:+-H "Content-Type: application/json" -d "$data"} \
+         "$GRAFANA_URL/api/$endpoint"
+}
+
+log "Setting up Grafana..."
+
+# Wait for Grafana
+log "⏳ Waiting for Grafana to be ready..."
 for i in {1..30}; do
-    if curl -s "$GRAFANA_URL/api/health" >/dev/null 2>&1; then
-        echo "✅ Grafana is ready"
+    if grafana_api GET "health" >/dev/null 2>&1; then
+        success "Grafana is ready"
         break
     fi
-    echo "Waiting for Grafana... ($i/30)"
+    [ $i -eq 30 ] && { error "Grafana failed to start"; exit 1; }
+    echo "Waiting... ($i/30)"
     sleep 2
 done
 
-# Delete existing datasource if it exists
-echo "🗑️  Removing existing Prometheus datasource (if any)..."
-curl -u "$GRAFANA_USER:$GRAFANA_PASS" -X DELETE "$GRAFANA_URL/api/datasources/uid/PBFA97CFB590B2093" 2>/dev/null || true
+# Setup datasource
+log "🔌 Setting up Prometheus datasource..."
+grafana_api DELETE "datasources/uid/$DATASOURCE_UID" >/dev/null 2>&1 || true
 
-# Create Prometheus datasource with correct Docker URL
-echo "🔌 Creating Prometheus datasource..."
-curl -u "$GRAFANA_USER:$GRAFANA_PASS" -X POST \
-    -H "Content-Type: application/json" \
-    -d "{
-        \"uid\": \"PBFA97CFB590B2093\",
-        \"name\": \"Prometheus\",
-        \"type\": \"prometheus\",
-        \"url\": \"$PROMETHEUS_URL\",
-        \"access\": \"proxy\",
-        \"isDefault\": true
-    }" \
-    "$GRAFANA_URL/api/datasources"
+DATASOURCE_JSON='{
+    "uid": "'$DATASOURCE_UID'",
+    "name": "Prometheus",
+    "type": "prometheus",
+    "url": "'$PROMETHEUS_URL'",
+    "access": "proxy",
+    "isDefault": true
+}'
 
-echo
-echo "🧪 Testing datasource connectivity..."
-DATASOURCE_TEST=$(curl -u "$GRAFANA_USER:$GRAFANA_PASS" -s "$GRAFANA_URL/api/datasources/proxy/uid/PBFA97CFB590B2093/api/v1/query?query=up")
-if echo "$DATASOURCE_TEST" | grep -q '"status":"success"'; then
-    echo "✅ Datasource connectivity test passed"
+if grafana_api POST "datasources" "$DATASOURCE_JSON" | grep -q "id"; then
+    success "Datasource created"
 else
-    echo "❌ Datasource connectivity test failed:"
-    echo "$DATASOURCE_TEST"
+    error "Failed to create datasource"
+    exit 1
+fi
+
+# Test connectivity
+if grafana_api GET "datasources/proxy/uid/$DATASOURCE_UID/api/v1/query?query=up" | grep -q "success"; then
+    success "Datasource connectivity verified"
+else
+    error "Datasource connectivity failed"
 fi
 
 # Import dashboards
-echo "📊 Importing dashboards..."
+log "📊 Importing dashboards..."
 for dashboard_file in grafana/dashboards/*.json; do
     if [ -f "$dashboard_file" ]; then
         dashboard_name=$(basename "$dashboard_file")
-        echo "  Importing $dashboard_name..."
-        DASHBOARD_RESPONSE=$(curl -s -u "$GRAFANA_USER:$GRAFANA_PASS" -X POST \
-            -H "Content-Type: application/json" \
-            -d @"$dashboard_file" \
-            "$GRAFANA_URL/api/dashboards/db")
-        
-        if echo "$DASHBOARD_RESPONSE" | grep -q '"status":"success"\|"id":[0-9]'; then
-            echo "    ✅ $dashboard_name imported successfully"
+        if grafana_api POST "dashboards/db" "@$dashboard_file" | grep -q "id"; then
+            success "Imported $dashboard_name"
         else
-            echo "    ⚠️  $dashboard_name may have issues: $(echo "$DASHBOARD_RESPONSE" | head -c 100)..."
+            error "Failed to import $dashboard_name"
         fi
     fi
 done
 
 echo
-echo "🎉 Grafana setup completed!"
-echo "📝 Access Grafana at: $GRAFANA_URL"
-echo "👤 Username: $GRAFANA_USER"
-echo "🔒 Password: $GRAFANA_PASS"
-echo
-echo "🔍 To verify metrics are working:"
-echo "   curl -u $GRAFANA_USER:$GRAFANA_PASS \"$GRAFANA_URL/api/datasources/proxy/uid/PBFA97CFB590B2093/api/v1/query?query=up\""
+success "🎉 Grafana setup completed!"
+echo "📝 Access: $GRAFANA_URL (admin/admin)"
+echo "🔍 Test: curl -u admin:admin \"$GRAFANA_URL/api/datasources/proxy/uid/$DATASOURCE_UID/api/v1/query?query=up\""

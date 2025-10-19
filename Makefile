@@ -60,17 +60,13 @@ status: ## Show status of all services
 # Testing
 test: ## Run all tests
 	@echo "Running comprehensive test suite..."
-	@$(MAKE) test-unit
-	@$(MAKE) test-integration
+	@./test.sh full
 
 test-unit: ## Run unit tests
-	@echo "Running unit tests..."
-	cd backend && source env/bin/activate && python -m pytest tests/ -v --cov=. --cov-report=html --cov-report=term
+	@./test.sh unit
 
 test-integration: ## Run integration tests
-	@echo "Running integration tests..."
-	@chmod +x test_system.sh
-	@./test_system.sh
+	@./test.sh integration
 
 test-load: ## Run load tests
 	@echo "Running load tests..."
@@ -146,8 +142,7 @@ metrics: ## Show current metrics from backend
 
 # CI/CD helpers
 ci-test: ## Run tests suitable for CI environment
-	@echo "Running CI tests..."
-	cd backend && python -m pytest tests/ -v --cov=. --cov-report=xml --cov-report=term-missing
+	@./test.sh ci
 
 ci-build: ## Build and test Docker image for CI
 	@echo "Building and testing Docker image..."
